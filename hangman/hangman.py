@@ -1,4 +1,5 @@
-from argparse import ArgumentDefaultsHelpFormatter
+# Working file, which process the game.
+
 import re
 import random
 
@@ -29,9 +30,18 @@ def search(lastLetter):
     return words_list2
                 
 
+def mechanicalFailure():
+    global result
+    print("Computer doesn't have any word")
+    print("Computer aborted\nHence you won")
+    result = "You Won"
+    analysis()
 
 def analysis():
-    print(points)
+    if points == 1 and points == 0:
+        print(f"You scored {points} point")
+    else:
+        print(f"You scored {points} point")
     g = input("Enter 'y' if you want to know the fouls and 'n' if not:\n")
     if g == 'y':
         if len(fouls) > 0:
@@ -49,10 +59,8 @@ def analysis():
     
 
 
-def mechanicalFailure():
-    print("Computer doesn't have any word")
-    print("Computer aborted\nHence you won")
-    analysis()
+
+    
     
 
 
@@ -90,11 +98,16 @@ def syllable_loop():
             global findLastLetter
             lastLetter = findLastLetter(userInput)
             words_list = search(lastLetter)
-            bts = []
-            for i in words_list:
-                bts.append(i)
-            display_word = random.choice(bts)
-            print(f"The last letter of {userInput} is {lastLetter}. And here is the word\n{display_word}\n")
+            if len(words_list)> 0:
+                bts = []
+                for i in words_list:
+                    bts.append(i)
+                display_word = random.choice(bts)
+                used_words.append(display_word)
+                print(f"The last letter of {userInput} is {lastLetter}. And here is the word\n{display_word}\n")
+            else:
+                mechanicalFailure()
+                break
                             
             while userInput_2 != "abort":
                 lastLetter_2 = findLastLetter(display_word)
@@ -102,44 +115,45 @@ def syllable_loop():
                 if userInput_2 in used_words:
                     points -= 1
                     fouls.append("You duplicated the word which was previously used")
-                    print(points)
                     print(f"{userInput_2} is already used, you can't take it again")
                     print("Try again..")
                     continue
                 if userInput_2.isnumeric():
                     fouls.append("Entered integer instead of words")
                     points -= 1
-                    print(points)
                     print("Sorry, try again.....")
                     print("You can't choose any number")
                     continue
                 elif userInput_2.isalpha() and userInput_2 != "abort":
+                    points += 1
                     used_words.append(userInput_2)
                     if lastLetter_2 == userInput_2[0]:
                         words_list = search(findLastLetter(userInput_2))
-                        display_word = random.choice(words_list)
-                        print(f"The last letter of {userInput_2} is {findLastLetter(userInput_2)}. And here is the word\n{display_word}")
-                        used_words.append(display_word)
-                        points += 1
-                        print(points)
+                        if len(words_list) == 0:
+                            break
+                        else:
+                            display_word = random.choice(words_list)
+                            print(f"The last letter of {userInput_2} is {findLastLetter(userInput_2)}. And here is the word\n{display_word}")
+                            used_words.append(display_word)
+                            points += 1
                     else:
                         fouls.append("You violated the basic rule by not entering the appropriate word")
-                        print(points)
                         points -= 1
                         continue
                 else:
-                    print(points)
                     points -= 1
                     fouls.append("You entered non-allowed invalid characters")
                     print("Sorry, try again..")
-                    print("These character aren't allowed")
+                    print("These characters aren't allowed")
                     continue
                 continue
-            result = "You lost\nYou are a noob.."
-            print(result)
+            global result
+            if result != "You Won" and userInput_2 == "abort":
+                result = "You lost\nYou are a noob.."
+                print(result)
+                analysis()
             break
         else:
-            print(points)
             fouls.append("You entered non-allowed invalid characters")
             points -= 1
             print("Sorry, try again....")
