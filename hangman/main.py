@@ -11,5 +11,5 @@ import hangman
 
 if __name__ == '__main__':
     hangman.syllable_loop()
-    hangman.analysis()
+    
 
